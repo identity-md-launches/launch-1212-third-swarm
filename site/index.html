@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#11160f" />
+    <title>Third Swarm · $SWARMLER · Fall in, ser.</title>
+    <meta
+      name="description"
+      content="One billion tokens. An unreasonable number of frogs. Welcome to Third Swarm: make a meme, meet the army, and follow the $SWARMLER launch on Ethereum."
+    />
+    <link rel="canonical" href="https://thirdswarm.si-md.xyz/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thirdswarm.si-md.xyz/" />
+    <meta property="og:site_name" content="Third Swarm" />
+    <meta property="og:title" content="Third Swarm · Fall in, ser." />
+    <meta
+      property="og:description"
+      content="Zero chill. One Swarm. The $SWARMLER frog army has arrived. Bring your best meme."
+    />
+    <meta
+      property="og:image"
+      content="https://fxumiqjngmabtgvruvka.supabase.co/storage/v1/object/public/forum-attachments/posts/mv1jblgp-o6my9g.png"
+    />
+    <meta property="og:image:alt" content="Third Swarm frog logo" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Third Swarm · $SWARMLER" />
+    <meta
+      name="twitter:description"
+      content="The Swarm Army marches on. Memes, frogs, and a spectacular lack of chill."
+    />
+    <meta
+      name="twitter:image"
+      content="https://fxumiqjngmabtgvruvka.supabase.co/storage/v1/object/public/forum-attachments/posts/mv1jblgp-o6my9g.png"
+    />
+    <link rel="icon" type="image/svg+xml" href="./assets/favicon.svg" />
+    <link
+      rel="preload"
+      href="./assets/fonts/barlow.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main" data-es="Saltar al contenido">Skip to content</a>
+    <div id="intro" class="intro" hidden>
+      <div class="intro-inner">
+        <div class="intro-tank" aria-hidden="true">▰<span>● ● ●</span></div>
+        <p class="eyebrow" data-es="CARGANDO EL EJÉRCITO… 69%">LOADING THE ARMY… 69%</p>
+        <p class="intro-title" data-es="PREPARA LOS MEMES.">MEMES AT THE READY.</p>
+        <button id="skip-intro" class="button secondary" data-es="Saltar intro →">
+          Skip intro →
+        </button>
+      </div>
+    </div>
+    <div class="top-ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span data-es="$SWARMLER · WAGMI · EL ENJAMBRE YA MARCHA · ¡A FORMAR! · "
+          >$SWARMLER · WAGMI · THE SWARM ARMY IS MARCHING · FALL IN · </span
+        ><span data-es="$SWARMLER · WAGMI · EL ENJAMBRE YA MARCHA · ¡A FORMAR! · "
+          >$SWARMLER · WAGMI · THE SWARM ARMY IS MARCHING · FALL IN · </span
+        ><span>$SWARMLER · WAGMI · $SWARMLER · WAGMI ·</span>
+      </div>
+    </div>
+    <header class="site-header">
+      <a class="brand" href="#home" aria-label="Third Swarm home"
+        ><span class="brand-face"
+          ><img src="./assets/logo.png" width="262" height="257" alt="" data-logo /></span
+        ><span>THIRD<br />SWARM<span class="brand-dot">®</span></span></a
+      >
+      <nav id="navigation" aria-label="Main navigation" data-es-label="Navegación principal">
+        <a href="#lore" data-es="La historia">The lore</a
+        ><a href="#war-room" data-es="Radar">War room</a
+        ><a href="#barracks" data-es="Memes">Meme barracks</a
+        ><a href="#generator" data-es="Crear un meme">Make a meme ↗</a>
+      </nav>
+      <div class="nav-tools">
+        <div class="language-switch" aria-label="Language" data-es-label="Idioma">
+          <button type="button" data-lang="en" aria-pressed="true">EN</button
+          ><span aria-hidden="true">/</span
+          ><button type="button" data-lang="es" aria-pressed="false">ES</button>
+        </div>
+        <button
+          id="motion-toggle"
+          class="icon-button"
+          type="button"
+          aria-pressed="true"
+          aria-label="Effects on"
+          data-es-label="Efectos activados"
+          title="Toggle effects"
+        >
+          ✳</button
+        ><button
+          id="menu-toggle"
+          class="icon-button menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="navigation"
+          aria-label="Open menu"
+          data-es-label="Abrir menú"
+        >
+          ☰
+        </button>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero section-wrap" id="home" aria-labelledby="hero-title">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+        <div class="hero-copy">
+          <div class="eyebrow">
+            <span class="status-dot"></span
+            ><span data-es="UN ENJAMBRE. CERO CORDURA.">ONE SWARM. ZERO CHILL.</span
+            ><span class="mini-label">ETHEREUM</span>
+          </div>
+          <h1 id="hero-title">
+            THIRD<br /><span>SWARM</span><span class="title-asterisk" aria-hidden="true">✳</span>
+          </h1>
+          <div class="hero-tag">
+            <span>$SWARMLER</span
+            ><span class="scribble" data-es="¡A formar, ser!">Fall in, ser!</span>
+          </div>
+          <p
+            class="hero-description"
+            data-es="El grupo se descontroló. Ahora tiene un ejército de ranas. Trae memes. Trae a tu gente. Deja la seriedad en la puerta."
+          >
+            The group chat got out of hand. Now it has a frog army. Bring memes. Bring your people.
+            Leave your last brain cell at the door.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary buy-button" data-link="coin" href="#enlist"
+              ><span data-es="Comprar $SWARMLER">Buy $SWARMLER</span
+              ><span aria-hidden="true">↗</span></a
+            ><a class="button secondary" data-link="chart" href="#war-room"
+              ><span data-es="Ver gráfico">View chart</span><span aria-hidden="true">↗</span></a
+            >
+          </div>
+          <p class="launch-note">
+            <span class="status-dot"></span
+            ><span id="hero-status" data-es="Lanzamiento en preparación. Sigue la señal."
+              >Launch in progress. Follow the signal.</span
+            >
+          </p>
+          <div class="hero-bottom">
+            <span class="mono" data-es="SIN LISTAS. SIN JEFES. SOLO RANAS."
+              >NO ROSTER. NO BOSS. JUST FROGS.</span
+            ><a href="#lore" class="scroll-link"
+              ><span data-es="Órdenes de marcha">Marching orders</span> ↓</a
+            >
+          </div>
+        </div>
+        <div
+          class="hero-art"
+          aria-label="Cartoon frog captain leading confetti tanks"
+          data-es-label="Capitán rana al frente de tanques de confeti"
+        >
+          <div class="target-ring ring-one"></div>
+          <div class="target-ring ring-two"></div>
+          <span class="art-coordinate mono" data-es="CUARTEL / 003">SWARM HQ / 003</span>
+          <span class="art-star star-a" aria-hidden="true">✳</span
+          ><span class="art-star star-b" aria-hidden="true">✦</span>
+          <div class="art-backtype" aria-hidden="true">HONK!</div>
+          <div class="army-art" id="hero-army"></div>
+          <button
+            id="hero-logo"
+            class="hero-logo"
+            type="button"
+            aria-label="Salute the frog captain; seven clicks unlock War Mode"
+            data-es-label="Saluda al capitán rana; siete clics activan el modo guerra"
+          >
+            <span class="logo-face"
+              ><img
+                data-logo
+                src="./assets/logo.png"
+                width="262"
+                height="257"
+                alt="Third Swarm frog captain"
+                data-es-alt="Capitán rana de Third Swarm"
+                fetchpriority="high" /></span
+            ><span class="captain-cap" aria-hidden="true"><span>✳</span></span>
+          </button>
+          <button class="sticker sticker-wagmi draggable" type="button" data-es="WAGMI">
+            WAGMI
+          </button>
+          <button class="sticker sticker-built draggable" type="button">
+            <span>100%</span><span data-es="HECHO POR EL ENJAMBRE">SWARM BUILT</span>
+          </button>
+          <button class="sticker sticker-hold draggable" type="button" data-es="¡MANTÉN LA LÍNEA!">
+            HOLD THE LINE!
+          </button>
+          <span class="art-footnote mono" data-es="CARGA: 100% CONFETI"
+            >PAYLOAD: 100% CONFETTI</span
+          >
+        </div>
+        <div class="vibe-panel">
+          <span class="vibe-label"
+            ><strong data-es="MORAL DEL ENJAMBRE">SWARM MORALE</strong
+            ><small data-es="Pura broma. No es un dato financiero."
+              >Just vibes. Not a financial metric.</small
+            ></span
+          >
+          <div class="vibe-track"><div id="vibe-fill"></div></div>
+          <output id="vibe-value">0%</output
+          ><button id="pump" class="pump-button" type="button">
+            <span data-es="¡MÁS ÁNIMO!">PUMP IT</span> ↑
+          </button>
+        </div>
+      </section>
+
+      <div class="diagonal-marquee" aria-hidden="true">
+        <div class="ticker-track">
+          <span data-es="✳ $SWARMLER ✳ ¡A FORMAR, SER! ✳ LOS MEMES PRIMERO ✳ $SWARMLER ✳ "
+            >✳ $SWARMLER ✳ FALL IN, SER. ✳ MEMES OVER EVERYTHING ✳ $SWARMLER ✳ </span
+          ><span>✳ $SWARMLER ✳ WAGMI ✳ $SWARMLER ✳ WAGMI ✳</span>
+        </div>
+      </div>
+
+      <section class="section-wrap lore-section" id="lore" aria-labelledby="lore-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-es="01 / INFORME TOTALMENTE SERIO">
+              01 / VERY SERIOUS INTELLIGENCE
+            </p>
+            <h2 id="lore-title" data-es="Así empezó el lío.">Well, that escalated.</h2>
+          </div>
+          <p data-es="Tres actos. Ningún adulto al mando.">Three acts. Zero adult supervision.</p>
+        </div>
+        <div class="comic-grid">
+          <article class="comic-panel tilt">
+            <span class="panel-number">01</span>
+            <div class="comic-art" data-scene="0"></div>
+            <div class="speech" data-es="¿Y SI HACEMOS UN GRUPO?">
+              WHAT IF WE MADE A GROUP CHAT?
+            </div>
+            <h3 data-es="Una rana. Una idea.">One frog. One idea.</h3>
+            <p
+              data-es="Todo empezó en un rincón de internet. Una rana soltó un «gm». Alguien contestó «honk»."
+            >
+              Somewhere in a forgotten corner of the internet, a frog said “gm.” Someone replied
+              “honk.”
+            </p>
+          </article>
+          <article class="comic-panel tilt">
+            <span class="panel-number">02</span>
+            <div class="comic-art" data-scene="1"></div>
+            <div class="speech" data-es="SER, SE ESTÁN MULTIPLICANDO.">
+              SER, THEY'RE MULTIPLYING.
+            </div>
+            <h3 data-es="Llegó el enjambre.">Then the swarm showed up.</h3>
+            <p
+              data-es="El grupo se convirtió en un pelotón. El pelotón pidió abrigos. Nadie leyó las instrucciones."
+            >
+              The chat became a squad. The squad ordered trench coats. Nobody read the instructions.
+            </p>
+          </article>
+          <article class="comic-panel tilt">
+            <span class="panel-number">03</span>
+            <div class="comic-art" data-scene="2"></div>
+            <div class="speech" data-es="VALE. AHORA SOMOS UN EJÉRCITO.">
+              FINE. WE'RE AN ARMY NOW.
+            </div>
+            <h3 data-es="Nació Third Swarm.">Third Swarm was born.</h3>
+            <p
+              data-es="Un token en Ethereum. Una misión compartida: crear memes absurdos y marchar juntos."
+            >
+              One token on Ethereum. One shared mission: make gloriously stupid memes and march
+              together.
+            </p>
+          </article>
+        </div>
+        <p
+          class="section-aside"
+          data-es="Tanques de juguete. Espíritu de equipo. Una cantidad preocupante de confeti."
+        >
+          Toy tanks. Team spirit. A concerning amount of confetti.
+        </p>
+      </section>
+
+      <section class="war-section" id="war-room" aria-labelledby="war-title">
+        <div class="section-wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-es="02 / TRANSMISIÓN DESDE ETHEREUM">
+                02 / TRANSMISSION FROM ETHEREUM
+              </p>
+              <h2 id="war-title" data-es="El radar.">The war room.</h2>
+            </div>
+            <span class="feed-state"
+              ><span class="status-dot"></span
+              ><span id="feed-status" data-es="Conectando…">Connecting…</span></span
+            >
+          </div>
+          <div class="stats-layout">
+            <div class="radar" aria-hidden="true">
+              <div class="radar-sweep"></div>
+              <span class="radar-dot dot-a"></span><span class="radar-dot dot-b"></span
+              ><span class="radar-dot dot-c"></span><span class="radar-cross">+</span
+              ><span class="radar-label" data-es="ENJAMBRE DETECTADO">SWARM DETECTED</span>
+            </div>
+            <div class="stats-grid">
+              <article class="stat">
+                <span class="mono" data-es="PRECIO / USD">PRICE / USD</span
+                ><strong data-market="priceUsd">—</strong
+                ><small data-es="Por $SWARMLER">Per $SWARMLER</small>
+              </article>
+              <article class="stat">
+                <span class="mono" data-es="CAPITALIZACIÓN">MARKET CAP</span
+                ><strong data-market="marketCap">—</strong
+                ><small data-es="Valor de mercado / USD">Market value / USD</small>
+              </article>
+              <article class="stat">
+                <span class="mono" data-es="VOLUMEN / 24 H">VOLUME / 24H</span
+                ><strong data-market="volume24h">—</strong
+                ><small data-es="Actividad de compraventa / USD">Trading activity / USD</small>
+              </article>
+            </div>
+          </div>
+          <div class="feed-footer">
+            <p
+              id="feed-detail"
+              data-es="Las cifras llegarán con el lanzamiento. Actualización cada 30 s."
+            >
+              Numbers arrive with the launch. Refreshes every 30s.
+            </p>
+            <button id="refresh-data" class="text-button" type="button" data-es="Actualizar ↻">
+              Refresh signal ↻
+            </button>
+          </div>
+          <div id="chart-panel" class="chart-panel">
+            <div class="chart-empty">
+              <div>
+                <span class="eyebrow" data-es="SIN DATOS INVENTADOS">NO MAKE-BELIEVE CANDLES</span>
+                <h3 data-es="El gráfico sigue al lanzamiento.">The chart follows the launch.</h3>
+                <p
+                  data-es="Abre la página del lanzamiento para ver el estado actual. El gráfico aparecerá aquí cuando esté disponible."
+                >
+                  Open the launch page for the current status. A supported chart will appear here
+                  when it's available.
+                </p>
+              </div>
+              <a class="button secondary" data-link="chart" href="#enlist" data-es="Ver gráfico ↗"
+                >View chart ↗</a
+              >
+            </div>
+            <div id="chart-host"></div>
+            <div id="chart-actions" class="chart-actions" hidden>
+              <span data-es="Si el gráfico no carga, ábrelo en una pestaña nueva."
+                >If the chart cannot load, open it in a new tab.</span
+              ><a data-link="chart" href="#war-room" data-es="Abrir gráfico completo ↗"
+                >Open full chart ↗</a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-wrap enlist-section" id="enlist" aria-labelledby="enlist-title">
+        <div class="recruit-poster">
+          <p class="eyebrow" data-es="03 / SE BUSCAN RECLUTAS">03 / RECRUITS WANTED</p>
+          <h2 id="enlist-title" data-es="TU RANA TE NECESITA.">YOUR FROG NEEDS YOU.</h2>
+          <div class="poster-frog" data-scene="3"></div>
+          <span class="poster-stamp" data-es="SE ACEPTAN NOVATOS">ROOKIES WELCOME</span>
+        </div>
+        <div class="enlist-content">
+          <p class="eyebrow" data-es="UN PEQUEÑO PASO PARA UNA RANA">ONE SMALL STEP FOR FROG</p>
+          <h2 data-es="De curioso a recluta.">From lurker to legend.</h2>
+          <ol class="steps">
+            <li>
+              <span>01</span>
+              <div>
+                <h3 data-es="Prepara tu cartera.">Get your wallet ready.</h3>
+                <p
+                  data-es="Usa una cartera compatible con Ethereum. El pool empareja $SWARMLER con IMD. Guarda algo de ETH para el gas."
+                >
+                  Use an Ethereum-compatible wallet. The pool pairs $SWARMLER with IMD. Keep some
+                  ETH for gas.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>02</span>
+              <div>
+                <h3 data-es="Comprueba la señal.">Check the signal.</h3>
+                <p
+                  data-es="La dirección oficial aparece abajo tras el despliegue. Compruébala en la página del lanzamiento antes de intercambiar."
+                >
+                  The official address appears below after deployment. Verify it on the launch page
+                  before making a swap.
+                </p>
+              </div>
+            </li>
+            <li>
+              <span>03</span>
+              <div>
+                <h3 data-es="Haz el intercambio. Trae memes.">Make the swap. Bring memes.</h3>
+                <p
+                  data-es="Pulsa Comprar para abrir la página del lanzamiento. Revisa el precio y las comisiones allí. Los memes van por cuenta de la casa."
+                >
+                  Hit Buy to open the launch page. Review the price and fees there. The memes are on
+                  the house.
+                </p>
+              </div>
+            </li>
+          </ol>
+          <div class="contract-box">
+            <span class="mono" data-es="CONTRATO OFICIAL / ETHEREUM"
+              >OFFICIAL CONTRACT / ETHEREUM</span
+            >
+            <div>
+              <code id="contract-address">launching…</code
+              ><button
+                id="copy-contract"
+                class="icon-button"
+                disabled
+                aria-label="Copy contract address"
+                data-es-label="Copiar dirección del contrato"
+              >
+                ⧉
+              </button>
+            </div>
+            <small
+              id="contract-hint"
+              data-es="Aún no existe una dirección desplegada. No copies imitaciones."
+              >No deployed address yet. Don't copy a look-alike.</small
+            >
+          </div>
+          <a
+            class="button primary buy-button"
+            data-link="coin"
+            href="#war-room"
+            data-es="Ir al lanzamiento ↗"
+            >Open launch page ↗</a
+          >
+        </div>
+      </section>
+
+      <section class="depot-section" id="supply" aria-labelledby="supply-title">
+        <div class="section-wrap">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" data-es="04 / REVISA LAS CAJAS">04 / COUNT THE CRATES</p>
+              <h2 id="supply-title" data-es="El almacén.">The supply depot.</h2>
+            </div>
+            <p data-es="Mil millones de ranas. Las cuentas claras.">
+              One billion frogs. The numbers, unpacked.
+            </p>
+          </div>
+          <div class="supply-layout">
+            <div class="donut-wrap">
+              <svg
+                class="supply-donut"
+                viewBox="0 0 240 240"
+                role="img"
+                aria-label="Supply allocation: 90% pool, 10% swarm"
+                data-es-label="Distribución: 90% al pool, 10% al enjambre"
+              >
+                <circle cx="120" cy="120" r="93" fill="none" stroke="#ef786d" stroke-width="38" />
+                <circle
+                  class="donut-segment"
+                  cx="120"
+                  cy="120"
+                  r="93"
+                  fill="none"
+                  stroke="#c8f45b"
+                  stroke-width="38"
+                  stroke-dasharray="525.9 58.436"
+                  transform="rotate(-90 120 120)"
+                />
+                <text x="120" y="120" text-anchor="middle">1B</text>
+                <text x="120" y="147" class="donut-symbol" text-anchor="middle">$SWARMLER</text>
+              </svg>
+              <p class="mono" data-es="SUMINISTRO FIJO · 18 DECIMALES">
+                FIXED SUPPLY · 18 DECIMALS
+              </p>
+            </div>
+            <div class="supply-crates">
+              <article class="crate">
+                <span class="crate-mark" aria-hidden="true">↟</span><strong>90%</strong>
+                <div>
+                  <h3 data-es="Al pool">Into the pool</h3>
+                  <p data-es="900.000.000 tokens para liquidez.">
+                    900,000,000 tokens for liquidity.
+                  </p>
+                </div>
+              </article>
+              <article class="crate coral-crate">
+                <span class="crate-mark" aria-hidden="true">✳</span><strong>10%</strong>
+                <div>
+                  <h3 data-es="Para el enjambre">For the swarm</h3>
+                  <p data-es="100.000.000 tokens mediante el distribuidor Merkle del lanzamiento.">
+                    100,000,000 tokens through the launch's Merkle distributor.
+                  </p>
+                </div>
+              </article>
+              <p
+                class="supply-note"
+                data-es="La fábrica del lanzamiento recibe el suministro completo y realiza la distribución. Este sitio no reparte tokens."
+              >
+                The launch factory receives the full supply and handles distribution. This site does
+                not distribute tokens.
+              </p>
+            </div>
+          </div>
+          <div class="fee-strip">
+            <div><strong>1.25%</strong><span data-es="Comisión del pool">Pool fee</span></div>
+            <span class="fee-plus">+</span>
+            <div>
+              <strong>1%</strong
+              ><span data-es="Comisión adicional del hook">Additional hook fee</span>
+            </div>
+            <p
+              data-es="La comisión del hook se calcula sobre el intercambio realmente ejecutado. Los tokens recaudados se envían a la dirección muerta mediante un barrido abierto a cualquiera; el IMD se acumula para recompras por lotes."
+            >
+              The hook fee is based on the actual filled swap. Collected tokens can be swept to the
+              dead address by anyone; IMD accrues for batch buybacks.
+            </p>
+          </div>
+          <details class="mechanics">
+            <summary data-es="Lee la mecánica de recompra y quema">
+              Read the buyback & burn mechanics
+            </summary>
+            <p
+              data-es="El diseño cobra un 1% del BalanceDelta real en la moneda no especificada después de cada intercambio. sweep() es público. executeBatch() también es público, opera fuera del callback y usa hasta el 25% del IMD acumulado. Los tokens comprados se envían a la dirección muerta. Los lotes no pagan comisión del hook."
+            >
+              The design collects 1% of the actual BalanceDelta in the unspecified currency after
+              each swap. Anyone may call sweep(). Anyone may call executeBatch() separately from the
+              swap callback, using up to 25% of accrued IMD. Bought tokens go to the dead address.
+              Batch swaps pay no hook fee.
+            </p>
+            <p
+              data-es="El límite sqrtPrice está 300 pb por encima de la referencia del bloque anterior, registrada al primer contacto del bloque. Si tiene más de 50 bloques, se usa el precio actual y la mitad del presupuesto. Se permiten ejecuciones parciales; el sobrante queda para el siguiente lote. La espera de 3600 s empieza solo si se gasta al menos el 1% del presupuesto. No hay otro control de deslizamiento. Estas son las reglas del lanzamiento, no garantías de precio."
+            >
+              The sqrtPrice limit is 300 bps above the previous-block reference, recorded on the
+              first touch in a block. If older than 50 blocks, the current price and half the budget
+              are used. Partial fills are accepted; unspent funds stay for the next batch. The 3600s
+              cooldown starts only when at least 1% of the budget is spent. There is no other
+              slippage check. These are launch rules, not price guarantees.
+            </p>
+          </details>
+        </div>
+      </section>
+
+      <section class="section-wrap barracks-section" id="barracks" aria-labelledby="barracks-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-es="05 / MATERIAL PARA EL GRUPO">05 / GROUP CHAT SUPPLIES</p>
+            <h2 id="barracks-title" data-es="El cuartel de memes.">The meme barracks.</h2>
+          </div>
+          <p data-es="Doce reclutas. Ninguno sabe qué hace. Descárgalos.">
+            Twelve recruits. Collectively, one brain cell. Take your pick.
+          </p>
+        </div>
+        <div class="meme-grid" id="meme-wall"></div>
+        <noscript
+          ><p>
+            The meme wall and generator need JavaScript. All launch information remains available
+            above.
+          </p></noscript
+        >
+        <p
+          class="section-aside"
+          data-es="Hechos aquí, para el enjambre. Guarda un PNG y suéltalo en el grupo."
+        >
+          Made here, for the swarm. Save a PNG. Deploy it in the group chat.
+        </p>
+      </section>
+
+      <section class="generator-section" id="generator" aria-labelledby="generator-title">
+        <div class="section-wrap generator-layout">
+          <div class="generator-controls">
+            <p class="eyebrow" data-es="06 / DEPARTAMENTO DE IDEAS DUDOSAS">
+              06 / DEPARTMENT OF QUESTIONABLE IDEAS
+            </p>
+            <h2 id="generator-title" data-es="Tú pones el chiste.">You make the punchline.</h2>
+            <p data-es="Elige tu rana. Escribe una tontería. Ascenso inmediato a jefe de memes.">
+              Pick your frog. Write something unhinged. Congratulations: you're head of memes.
+            </p>
+            <label for="meme-template" data-es="Elige un recluta">Choose your recruit</label
+            ><select id="meme-template"></select
+            ><label for="top-text" data-es="Texto de arriba">Top text</label
+            ><input
+              id="top-text"
+              maxlength="64"
+              value="WHEN THE GROUP CHAT"
+              autocomplete="off"
+              spellcheck="false"
+            /><label for="bottom-text" data-es="Texto de abajo">Bottom text</label
+            ><input
+              id="bottom-text"
+              maxlength="64"
+              value="BECOMES AN ARMY"
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <p
+              class="input-hint"
+              data-es="Máximo 64 caracteres por línea. Todo se queda en tu navegador."
+            >
+              64 characters per field. Everything stays in your browser.
+            </p>
+            <button
+              id="download-meme"
+              class="button primary"
+              type="button"
+              disabled
+              data-es="Descargar mi meme ↓"
+            >
+              Download my meme ↓
+            </button>
+            <p
+              id="generator-status"
+              class="input-hint"
+              role="status"
+              data-es="Cargando ilustración…"
+            >
+              Loading artwork…
+            </p>
+          </div>
+          <div class="meme-preview">
+            <div class="preview-bar">
+              <span class="mono" data-es="VISTA PREVIA / 1080 × 1080"
+                >LIVE PREVIEW / 1080 × 1080</span
+              ><span class="status-dot"></span>
+            </div>
+            <canvas
+              id="meme-canvas"
+              width="1080"
+              height="1080"
+              role="img"
+              aria-label="Preview of your meme"
+              data-es-label="Vista previa de tu meme"
+            ></canvas>
+            <p class="preview-caption" data-es="TU MEME. TU ABSOLUTA FALTA DE CRITERIO.">
+              YOUR MEME. YOUR QUESTIONABLE JUDGMENT.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-wrap sound-section" id="soundboard" aria-labelledby="sound-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-es="07 / SUBE EL VOLUMEN, SI QUIERES">
+              07 / LOUD, BUT ONLY IF YOU ASK
+            </p>
+            <h2 id="sound-title" data-es="La banda sonora.">The noise department.</h2>
+          </div>
+          <p data-es="Silencio hasta que pulses. Tus vecinos te lo agradecen.">
+            Silent until you press play. Your neighbors thank us.
+          </p>
+        </div>
+        <div class="sound-grid">
+          <button type="button" data-sound="honk">
+            <span aria-hidden="true">♬</span><strong>HONK</strong
+            ><small data-es="Protocolo de rana">Frog protocol</small
+            ><i aria-hidden="true">↗</i></button
+          ><button type="button" data-sound="march">
+            <span aria-hidden="true">▥</span><strong data-es="MARCHA">MARCH</strong
+            ><small data-es="Izquierda, izquierda…">Left, left, left…</small
+            ><i aria-hidden="true">↗</i></button
+          ><button type="button" data-sound="salute">
+            <span aria-hidden="true">✳</span><strong data-es="SALUDO">SALUTE</strong
+            ><small data-es="Presenten memes">Memes at attention</small
+            ><i aria-hidden="true">↗</i></button
+          ><button type="button" data-sound="wagmi">
+            <span aria-hidden="true">〰</span><strong>WAGMI</strong
+            ><small data-es="Cuatro notas. Una vibra.">Four notes. One vibe.</small
+            ><i aria-hidden="true">↗</i>
+          </button>
+        </div>
+        <p class="input-hint" id="sound-status" role="status"></p>
+      </section>
+
+      <section class="duty-section" id="community" aria-labelledby="duty-title">
+        <div class="section-wrap">
+          <p class="eyebrow" data-es="08 / EL GRUPO ESTÁ ABIERTO">08 / THE GROUP CHAT IS OPEN</p>
+          <h2 id="duty-title">
+            <span data-es="MUCHAS RANAS.">MANY FROGS.</span><br /><span data-es="UN ENJAMBRE."
+              >ONE SWARM.</span
+            >
+          </h2>
+          <p
+            data-es="No necesitas uniforme. No necesitas permiso. Si has llegado hasta aquí, ya eres de los nuestros."
+          >
+            No uniform required. No permission needed. If you made it this far, you're already one
+            of us.
+          </p>
+          <div class="duty-actions">
+            <button id="salute-button" class="button dark-button" type="button">
+              <span data-es="Saluda al enjambre">Salute the swarm</span
+              ><span aria-hidden="true">✳</span></button
+            ><a
+              id="x-link"
+              class="button outline-dark"
+              href="https://x.com/intent/post?text=Fall%20in%2C%20ser.%20%24SWARMLER%20https%3A%2F%2Fthirdswarm.si-md.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span id="x-link-label" data-es="Compartir en X">Share on X</span> ↗</a
+            >
+          </div>
+          <div class="salute-army" id="salute-army" aria-hidden="true"></div>
+          <p
+            class="duty-footnote"
+            data-es="SIN PROMESAS. SOLO UNA CANTIDAD ABSURDA DE ESPÍRITU DE EQUIPO."
+          >
+            NO PROMISES. JUST AN ABSURD AMOUNT OF TEAM SPIRIT.
+          </p>
+        </div>
+      </section>
+    </main>
+    <div class="bottom-ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span data-es="$SWARMLER · WAGMI · EL ENJAMBRE YA MARCHA · ¡A FORMAR! · "
+          >$SWARMLER · WAGMI · THE SWARM ARMY IS MARCHING · FALL IN · </span
+        ><span>$SWARMLER · WAGMI · $SWARMLER · WAGMI ·</span>
+      </div>
+    </div>
+    <footer class="site-footer section-wrap">
+      <a class="footer-wordmark" href="#home">THIRD SWARM<span>®</span></a>
+      <p data-es="El ejército del enjambre sigue marchando. Hecho al 100% por el enjambre de IA.">
+        The Swarm Army marches on. Built 100% by the AI swarm.
+      </p>
+      <p class="footer-legal">
+        <span data-es="Hecho al 100% por el enjambre de Identity.md"
+          >Built 100% by the Identity.md swarm</span
+        >
+        · <span data-es="lanzado en">launched on</span>
+        <a href="https://www.si-md.xyz/launchpad" target="_blank" rel="noopener noreferrer"
+          >si-md.xyz/launchpad</a
+        >
+        · <span data-es="no es asesoramiento financiero">not financial advice</span>
+      </p>
+      <div class="footer-bottom">
+        <span>© THIRD SWARM 2026</span
+        ><span data-es="HECHO CON CERO CORDURA Y MUCHAS RANAS."
+          >CRAFTED WITH ZERO CHILL & MANY FROGS.</span
+        ><a href="#home" data-es="Volver arriba ↑">Back to top ↑</a>
+      </div>
+    </footer>
+    <div id="toast" role="status" class="toast" hidden></div>
+    <div id="retro-popup" class="retro-popup" hidden>
+      <div class="retro-title">
+        <span>SWARM.EXE</span
+        ><button
+          type="button"
+          id="close-popup"
+          aria-label="Close joke notification"
+          data-es-label="Cerrar aviso de broma"
+        >
+          ×
+        </button>
+      </div>
+      <div class="retro-content">
+        <span aria-hidden="true">⚠</span>
+        <p id="popup-copy" data-es="Aviso: se acerca el enjambre.">Warning: army incoming.</p>
+      </div>
+      <small data-es="Mensaje de broma · Tu dispositivo está bien."
+        >Joke message · Your device is fine.</small
+      ><button type="button" id="dismiss-popup" data-es="Entendido, ser.">Understood, ser.</button>
+    </div>
+    <button
+      id="roaming-tank"
+      type="button"
+      class="roaming-tank"
+      aria-label="Pop the confetti tank"
+      data-es-label="Haz estallar el tanque de confeti"
+      hidden
+    >
+      <span aria-hidden="true">▰<small>● ● ●</small></span>
+    </button>
+    <canvas id="confetti-canvas" aria-hidden="true"></canvas>
+    <div id="tank-cursor" aria-hidden="true">▰<small>● ●</small></div>
+    <div id="click-honk" aria-hidden="true">HONK!</div>
+  </body>
+</html>
