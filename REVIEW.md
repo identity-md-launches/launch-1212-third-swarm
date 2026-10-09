@@ -1,0 +1,11 @@
+# Logo delivery review
+
+Reviewed the supplied creator image and the pinned hook/token/testing/security inputs. The bounded deliverable is five logo variations plus a selected wallet image; the contract floor tests require token/hook creation code and are not applicable to an artwork-only submission. No token/hook verification is claimed.
+
+The previous rejection reported that nothing compiled and no tests ran. This package remedies that with `src/PngAsset.sol` and a Solidity asset-validation suite that reads the actual deliverable PNGs, including the selected artifact. It explicitly checks that all five options differ and that the selected artifact equals option 2. Its negative controls reject corrupted signatures, absent image data, truncated files and alpha-capable formats. A dimension fuzz test checks the exact square-size requirement.
+
+Packaging finding: Git metadata is read-only on this worker; staging and committing fail while creating `.git/index.lock`. No commit was created. All test inputs exist, are not ignored, and appear in `git status --short`; the submitting worker must commit them. The root `.gitignore` explicitly makes the selected artifact eligible for inclusion. A fresh-copy check is used to verify the complete deliverable package without relying on `.imd/`, local caches or generated-image storage; it is not represented as a committed-tree check.
+
+Visual review found each approach identifiable at 64 pixels on light and dark backgrounds. The selected option 2 remained a single recognizable face in a 32-pixel circle, with no text, border or transparent area. The other four options are retained for their requested distinct approaches. One image-generation request was rejected before rendering; its lettermark was completed with the authorized SVG fallback. No completed draft was discarded.
+
+Checks run locally: Foundry offline compilation with solc 0.8.26; twelve passing Foundry asset tests; PNG structure, CRC, decompression, opacity, dimensions and SHA-256 checks; exact equality between option 2 and artifacts/logo.png. The first suite used 1,000 dimension fuzz cases; the final suite uses 2,000 and was rerun with seed `0x737761726d6c6572`. `forge fmt --check` passed. These checks validate artwork delivery only, not any token or swap mechanics.

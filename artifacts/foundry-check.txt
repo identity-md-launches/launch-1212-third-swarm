@@ -1,0 +1,37 @@
+Fresh delivery-file copy: no .imd, generated image cache, out, cache, .git or external dependencies copied.
+
+$ forge build --offline
+Compiling 2 files with Solc 0.8.26
+Solc 0.8.26 finished in 103.14ms
+Compiler run successful!
+
+$ forge test --offline
+No files changed, compilation skipped
+
+Ran 12 tests for test/LogoAssets.t.sol:LogoAssetsTest
+[PASS] testFuzz_HeaderRejectsIncorrectDimensions(uint32,uint32) (runs: 2000, μ: 1076, ~: 1076)
+[PASS] test_AllFiveOptionsDiffer() (gas: 214461374)
+[PASS] test_EmblemPng() (gas: 77030672)
+[PASS] test_GeometricWalletPng() (gas: 13072694)
+[PASS] test_LettermarkPng() (gas: 131163)
+[PASS] test_MascotPng() (gas: 20222874)
+[PASS] test_MemePng() (gas: 27386864)
+[PASS] test_SelectedArtifactEqualsGeometricOption() (gas: 22642452)
+[PASS] test_ValidatorRejectsAlphaChannel() (gas: 5698200)
+[PASS] test_ValidatorRejectsBrokenSignature() (gas: 5697961)
+[PASS] test_ValidatorRejectsMissingImageData() (gas: 5711088)
+[PASS] test_ValidatorRejectsTruncatedFile() (gas: 5875839)
+Suite result: ok. 12 passed; 0 failed; 0 skipped; finished in 38.68ms (97.22ms CPU time)
+
+Ran 1 test suite in 39.17ms (38.68ms CPU time): 12 tests passed, 0 failed, 0 skipped (12 total tests)
+
+$ forge fmt --check
+
+$ python3 logos/verify.py
+PASS logo-1.png: 1024x1024 opaque RGB, 1052179 bytes, CRC/decompression/SHA-256 valid
+PASS logo-2.png: 1024x1024 opaque RGB, 839529 bytes, CRC/decompression/SHA-256 valid
+PASS logo-3.png: 1024x1024 opaque RGB, 57782 bytes, CRC/decompression/SHA-256 valid
+PASS logo-4.png: 1024x1024 opaque RGB, 2084968 bytes, CRC/decompression/SHA-256 valid
+PASS logo-5.png: 1024x1024 opaque RGB, 1229837 bytes, CRC/decompression/SHA-256 valid
+PASS logo.png: 1024x1024 opaque RGB, 839529 bytes, CRC/decompression/SHA-256 valid
+PASS artifacts/logo.png is byte-for-byte identical to the selected logo-2.png

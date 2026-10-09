@@ -1,0 +1,9 @@
+/out/
+/cache/
+/broadcast/
+/test/scratch/
+!/artifacts/
+!/artifacts/logo.png
+!/artifacts/size-check-64px.png
+!/artifacts/wallet-check-32px.png
+!/artifacts/validation.txt

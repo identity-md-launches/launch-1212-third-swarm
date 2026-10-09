@@ -1,0 +1,20 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = []
+solc_version = "0.8.26"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+bytecode_hash = "none"
+offline = true
+ffi = false
+fs_permissions = [
+  { access = "read", path = "./logos/logo-1.png" },
+  { access = "read", path = "./logos/logo-2.png" },
+  { access = "read", path = "./logos/logo-3.png" },
+  { access = "read", path = "./logos/logo-4.png" },
+  { access = "read", path = "./logos/logo-5.png" },
+  { access = "read", path = "./artifacts/logo.png" },
+]

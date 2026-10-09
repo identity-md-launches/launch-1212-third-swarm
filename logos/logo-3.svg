@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="SWARMLER frog lettermark">
+  <title>SWARMLER — frog lettermark</title>
+  <desc>Original code-drawn fallback. Eight custom path letters spell SWAR over MLER, with swept hair, frog eyes and a coral smile.</desc>
+  <defs>
+    <path id="S" d="M166 0H26L0 26V94L20 114H116V150H0V196H140L166 170V100L144 78H50V46H166Z"/>
+    <path id="W" d="M0 0H43L59 117L79 50H110L131 117L147 0H190L162 196H116L95 132L74 196H28Z"/>
+    <path id="A" fill-rule="evenodd" d="M0 196L55 0H116L171 196H120L111 162H60L51 196ZM73 119H99L86 69Z"/>
+    <path id="R" fill-rule="evenodd" d="M0 0H128L164 36V98L138 124L178 196H122L83 128H50V196H0ZM50 46V85H103L114 74V56L104 46Z"/>
+    <path id="M" d="M0 196V0H48L90 79L132 0H180V196H132V83L103 139H76L48 83V196Z"/>
+    <path id="L" d="M0 0H51V149H166V196H0Z"/>
+    <path id="E" d="M0 0H164V46H50V75H150V120H50V150H164V196H0Z"/>
+    <g id="top">
+      <use href="#S" x="132" y="354"/>
+      <use href="#W" x="321" y="354"/>
+      <use href="#A" x="529" y="354"/>
+      <use href="#R" x="722" y="354"/>
+    </g>
+    <g id="bottom">
+      <use href="#M" x="132" y="588"/>
+      <use href="#L" x="337" y="588"/>
+      <use href="#E" x="529" y="588"/>
+      <use href="#R" x="722" y="588"/>
+    </g>
+  </defs>
+  <path fill="#98734f" d="M0 0H1024V1024H0Z"/>
+  <!-- Frog eyes and the reference's expressive swept hair. -->
+  <path fill="#111610" d="M225 310Q211 176 349 152Q416 48 558 105Q674 160 812 116Q805 236 696 258L677 316Z"/>
+  <path fill="#64855b" stroke="#111610" stroke-width="20" d="M190 325Q182 209 327 211Q438 205 474 279Q521 204 658 218Q803 226 834 327Z"/>
+  <ellipse cx="347" cy="282" rx="96" ry="55" fill="#eee9d2"/>
+  <ellipse cx="653" cy="282" rx="96" ry="55" fill="#eee9d2"/>
+  <ellipse cx="367" cy="281" rx="32" ry="44" fill="#111610"/>
+  <ellipse cx="673" cy="281" rx="32" ry="44" fill="#111610"/>
+  <!-- One solid shadow keeps the lettering readable on either page color. -->
+  <g fill="#111610" stroke="#111610" stroke-width="24" stroke-linejoin="round" transform="translate(8 16)">
+    <use href="#top"/><use href="#bottom"/>
+  </g>
+  <g stroke="#111610" stroke-width="14" stroke-linejoin="round" paint-order="stroke fill">
+    <use href="#top" fill="#64855b"/>
+    <use href="#bottom" fill="#eee9d2"/>
+  </g>
+  <path fill="#b96968" stroke="#111610" stroke-width="16" stroke-linejoin="round" d="M277 831Q515 877 755 831Q704 934 516 938Q339 937 277 831Z"/>
+</svg>

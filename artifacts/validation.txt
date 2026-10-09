@@ -1,0 +1,7 @@
+PASS logo-1.png: 1024x1024 opaque RGB, 1052179 bytes, CRC/decompression/SHA-256 valid
+PASS logo-2.png: 1024x1024 opaque RGB, 839529 bytes, CRC/decompression/SHA-256 valid
+PASS logo-3.png: 1024x1024 opaque RGB, 57782 bytes, CRC/decompression/SHA-256 valid
+PASS logo-4.png: 1024x1024 opaque RGB, 2084968 bytes, CRC/decompression/SHA-256 valid
+PASS logo-5.png: 1024x1024 opaque RGB, 1229837 bytes, CRC/decompression/SHA-256 valid
+PASS logo.png: 1024x1024 opaque RGB, 839529 bytes, CRC/decompression/SHA-256 valid
+PASS artifacts/logo.png is byte-for-byte identical to the selected logo-2.png
