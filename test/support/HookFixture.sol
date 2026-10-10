@@ -105,7 +105,11 @@ abstract contract HookFixture is Test {
         bool found;
         for (uint256 i; i < logs.length; ++i) {
             if (logs[i].emitter == address(manager) && logs[i].topics[0] == SWAP_EVENT) {
-                (int128 d0, int128 d1,,,,) = abi.decode(logs[i].data, (int128, int128, uint160, uint128, int24, uint24));
+                assertEq(logs[i].topics[1], PoolId.unwrap(key.toId()), "wrong pool emitted swap");
+                assertEq(address(uint160(uint256(logs[i].topics[2]))), address(router));
+                (int128 d0, int128 d1,,,, uint24 lpFee) =
+                    abi.decode(logs[i].data, (int128, int128, uint160, uint128, int24, uint24));
+                assertEq(lpFee, 12500, "hook changed the pool's static LP fee");
                 raw = toBalanceDelta(d0, d1);
                 found = true;
             }
@@ -128,10 +132,15 @@ abstract contract HookFixture is Test {
         assertEq(manager.getNonzeroDeltaCount(), 0);
         assertEq(manager.currencyDelta(address(hook), key.currency0), 0);
         assertEq(manager.currencyDelta(address(hook), key.currency1), 0);
+        assertEq(manager.currencyDelta(address(router), key.currency0), 0);
+        assertEq(manager.currencyDelta(address(router), key.currency1), 0);
         assertEq(manager.balanceOf(address(hook), uint160(IMD)), hook.pending());
         assertEq(manager.balanceOf(address(hook), uint160(address(token))), hook.pendingBurn());
         assertEq(IERC20Minimal(IMD).balanceOf(address(hook)), 0);
         assertEq(token.balanceOf(address(hook)), 0);
+        assertEq(IERC20Minimal(IMD).balanceOf(address(router)), 0, "router retained a refund");
+        assertEq(token.balanceOf(address(router)), 0, "router retained a refund");
+        assertFalse(manager.isUnlocked(), "manager was not relocked");
     }
 
     function _abs(int128 value) internal pure returns (uint256) {

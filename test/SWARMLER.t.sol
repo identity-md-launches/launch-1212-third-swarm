@@ -73,6 +73,40 @@ contract SWARMLERTest is Test {
         assertEq(token.balanceOf(address(this)), 1e27);
     }
 
+    function test_FailedTransferFromRestoresAnAlreadyDebitedAllowance() public {
+        token.transfer(alice, 10);
+        vm.prank(alice);
+        token.approve(bob, 20);
+        vm.prank(bob);
+        vm.expectRevert(SWARMLER.InsufficientBalance.selector);
+        token.transferFrom(alice, bob, 11);
+        assertEq(token.allowance(alice, bob), 20);
+        assertEq(token.balanceOf(alice), 10);
+        assertEq(token.balanceOf(bob), 0);
+
+        vm.prank(bob);
+        vm.expectRevert(SWARMLER.InvalidAddress.selector);
+        token.transferFrom(alice, address(0), 10);
+        assertEq(token.allowance(alice, bob), 20);
+        vm.prank(bob);
+        token.transferFrom(alice, bob, 10);
+        assertEq(token.allowance(alice, bob), 10);
+        assertEq(token.balanceOf(alice), 0);
+        assertEq(token.balanceOf(bob), 10);
+    }
+
+    function test_DelegatedSelfTransferSpendsAllowanceWithoutChangingBalance() public {
+        token.approve(alice, 2);
+        vm.prank(alice);
+        token.transferFrom(address(this), address(this), 2);
+        assertEq(token.balanceOf(address(this)), token.totalSupply());
+        assertEq(token.allowance(address(this), alice), 0);
+        vm.prank(alice);
+        vm.expectRevert(SWARMLER.InsufficientAllowance.selector);
+        token.transferFrom(address(this), address(this), 1);
+        assertEq(token.balanceOf(address(this)), token.totalSupply());
+    }
+
     function test_NoAdminMintOrUpgradeSelectors() public {
         bytes4[8] memory selectors = [
             bytes4(keccak256("mint(address,uint256)")),
