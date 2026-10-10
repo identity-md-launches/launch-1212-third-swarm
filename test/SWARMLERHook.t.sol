@@ -182,16 +182,146 @@ contract SWARMLERHookTest is HookFixture, IUnlockCallback {
         assertEq(spent, fees / 4);
     }
 
-    function test_StaleReferenceUsesCurrentPriceAndHalfBudget() public {
+    function test_StaleReferenceUsesFirstTouchPriceAndHalfBudget() public {
         uint256 fees = _pairFees();
+        uint160 closingPrice = _price();
         vm.roll(block.number + 51);
         _swap(true, true, 1e21, 0);
         uint160 current = _price();
+        assertEq(hook.referencePrice(), closingPrice);
         assertTrue(hook.referencePrice() != current);
         vm.recordLogs();
         (uint256 spent,) = hook.executeBatch();
         assertEq(spent, fees / 8);
-        _assertBatchLog(fees / 8, _limit(current), true);
+        _assertBatchLog(fees / 8, _limit(closingPrice), true);
+    }
+
+    function test_StaleReferenceRejectsAtomicSandwich() public {
+        _liquidity(-LIQUIDITY);
+        router.liquidity(key, ModifyLiquidityParams(-887220, 887220, 1e21, bytes32(0)), FUNDING, FUNDING);
+        // Accrue buyback claims through ordinary, fully settled trades in distinct blocks.
+        for (uint256 i; i < 60; ++i) {
+            vm.roll(block.number + 1);
+            _swap(false, true, 500e18, 0);
+            vm.roll(block.number + 1);
+            _swap(true, false, 500e18, 0);
+        }
+        uint160 closingPrice = _price();
+        uint256 pendingBefore = hook.pending();
+        vm.roll(block.number + 51);
+
+        address attacker = makeAddr("batch sandwich attacker");
+        IERC20Minimal(IMD).transfer(attacker, 600e18);
+        vm.startPrank(attacker);
+        IERC20Minimal(IMD).approve(address(router), 600e18);
+        bool buyZeroForOne = !hook.tokenIsCurrency0();
+        router.swap(
+            key,
+            SwapParams(
+                buyZeroForOne, -600e18, buyZeroForOne ? TickMath.MIN_SQRT_PRICE + 1 : TickMath.MAX_SQRT_PRICE - 1
+            ),
+            600e18,
+            ""
+        );
+        uint160 pumpedPrice = _price();
+        assertEq(hook.referencePrice(), closingPrice);
+        if (hook.tokenIsCurrency0()) assertGt(pumpedPrice, _limit(closingPrice));
+        else assertLt(pumpedPrice, _limit(closingPrice));
+
+        // The manager relocks after each router call, so all three operations fit in one transaction.
+        (uint256 spent, uint256 burned) = hook.executeBatch();
+        uint256 acquired = token.balanceOf(attacker);
+        token.approve(address(router), acquired);
+        router.swap(
+            key,
+            SwapParams(
+                !buyZeroForOne,
+                -int256(acquired),
+                buyZeroForOne ? TickMath.MAX_SQRT_PRICE - 1 : TickMath.MIN_SQRT_PRICE + 1
+            ),
+            acquired,
+            ""
+        );
+        vm.stopPrank();
+
+        emit log_named_uint("batch spent", spent);
+        emit log_named_uint("attacker ending IMD", IERC20Minimal(IMD).balanceOf(attacker));
+        assertEq(spent, 0, "same-block pump must not move the stale batch bound");
+        assertEq(burned, 0);
+        assertLt(IERC20Minimal(IMD).balanceOf(attacker), 600e18, "round trip must lose fees");
+        assertEq(token.balanceOf(attacker), 0);
+        assertGe(hook.pending(), pendingBefore, "batch must retain all accrued IMD");
+        assertEq(hook.lastBatch(), 0);
+        _assertSettled();
+    }
+
+    function test_StaleZeroFillsCannotRatchetPriceWithinBlock() public {
+        uint256 fees = _pairFees();
+        _liquidity(-LIQUIDITY);
+        // No liquidity between spot and the per-block bound, with a distant position to target.
+        bool token0 = hook.tokenIsCurrency0();
+        router.liquidity(
+            key,
+            ModifyLiquidityParams(
+                token0 ? int24(6000) : int24(-6060), token0 ? int24(6060) : int24(-6000), 1e18, bytes32(0)
+            ),
+            FUNDING,
+            FUNDING
+        );
+        uint160 closingPrice = _price();
+        uint256 priceBlock = hook.lastPriceBlock();
+        vm.roll(priceBlock + 51);
+        for (uint256 i; i < 5; ++i) {
+            (uint256 spent, uint256 burned) = hook.executeBatch();
+            assertEq(spent, 0);
+            assertEq(burned, 0);
+            assertEq(hook.lastBatch(), 0);
+        }
+        emit log_named_uint("per-block bound", _limit(closingPrice));
+        emit log_named_uint("price after five batches", _price());
+        assertEq(_price(), _limit(closingPrice), "zero-fill retries must keep the first limit");
+        assertEq(hook.referencePrice(), closingPrice);
+        assertEq(hook.referenceBlock(), priceBlock);
+        assertEq(hook.pending(), fees);
+        _assertSettled();
+    }
+
+    function test_StaleDustFillKeepsBoundAndRecoversNextBlock() public {
+        uint256 fees = _pairFees();
+        _liquidity(-LIQUIDITY);
+        _liquidity(1000);
+        uint160 closingPrice = _price();
+        uint256 priceBlock = hook.lastPriceBlock();
+        vm.roll(priceBlock + 51);
+        hook.sweep(); // A sweep may be the first touch, without refreshing reference age.
+        vm.recordLogs();
+        (uint256 spent, uint256 burned) = hook.executeBatch();
+        assertGt(spent, 0);
+        assertLt(spent, (fees / 8 + 99) / 100);
+        assertGt(burned, 0);
+        assertEq(hook.lastBatch(), 0);
+        assertEq(_price(), _limit(closingPrice));
+        _assertBatchLog(fees / 8, _limit(closingPrice), true);
+
+        for (uint256 i; i < 3; ++i) {
+            (uint256 retry, uint256 bought) = hook.executeBatch();
+            assertEq(retry, 0);
+            assertEq(bought, 0);
+            assertEq(_price(), _limit(closingPrice));
+        }
+        assertEq(hook.pending(), fees - spent);
+        assertEq(hook.referenceBlock(), priceBlock);
+        assertEq(hook.lastBatch(), 0);
+        _assertSettled();
+
+        uint160 nextReference = _price();
+        vm.roll(block.number + 1);
+        _liquidity(LIQUIDITY);
+        (uint256 recovered,) = hook.executeBatch();
+        assertEq(hook.referencePrice(), nextReference);
+        assertEq(recovered, (fees - spent) / 4);
+        assertEq(hook.lastBatch(), block.timestamp);
+        _assertSettled();
     }
 
     function test_SweepCannotRefreshAnOldPrice() public {
@@ -216,6 +346,9 @@ contract SWARMLERHookTest is HookFixture, IUnlockCallback {
         assertGt(burned, 0);
         assertEq(hook.pending(), fees - spent);
         assertEq(_price(), _limit(Q96));
+        // M1 measures the bound in sqrt units: 3% sqrt movement permits 6.09% spot movement.
+        uint256 relativeSqrt = hook.tokenIsCurrency0() ? uint256(_price()) * 1e18 / Q96 : uint256(Q96) * 1e18 / _price();
+        assertApproxEqAbs(relativeSqrt * relativeSqrt / 1e18, 1.0609e18, 3);
         assertEq(hook.lastBatch(), block.timestamp);
         _assertSettled();
     }

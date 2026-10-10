@@ -200,7 +200,8 @@ contract SWARMLERHook is IUnlockCallback {
         uint160 current = _currentPrice();
         uint160 anchor = referencePrice;
         if (stale) {
-            anchor = current;
+            // _touch captured the current price at the block's first touch, before any swap.
+            // Keep that anchor frozen: a live fallback here permits same-block pumps and ratchets.
             budget /= 2;
         }
         uint160 limit = _priceLimit(anchor);

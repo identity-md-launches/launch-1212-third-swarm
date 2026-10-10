@@ -7,13 +7,13 @@ Recorded locally on 2026-10-10 with Foundry 1.8.5 and Solidity 0.8.26. These are
 | Check | Result |
 | --- | --- |
 | `forge build` and final `forge build --sizes` | Passed with the unchanged root compiler configuration |
-| `forge test -j 4` | **93 passed, 0 failed**; the two fork suites explicitly skipped in `setUp` without a selected fork |
-| Mainnet fork at block **26,158,413**, command below | **62 passed, 0 failed, 0 skipped** against the deployed PoolManager and IMD |
+| `forge test` | **99 passed, 0 failed, 2 skipped**; the two fork suites explicitly skipped in `setUp` without a selected fork |
+| Mainnet fork at block **26,158,413**, command below | **68 passed, 0 failed, 0 skipped** against the deployed PoolManager and IMD |
 | `forge fmt --check` | Passed |
 | Manifest shape, values, local import closure | Passed a local Python check using the standard library |
 | Protected configuration | `foundry.toml` byte-for-byte equal to HEAD; no protected configuration/dependency paths modified |
 | Runtime escape-hatch checks | No executable SELFDESTRUCT, DELEGATECALL, or CALLCODE in either launch contract |
-| Hook sizes | **7,650 bytes runtime; 8,487 bytes creation bytecode + 64 bytes constructor arguments = 8,551 bytes initcode** |
+| Hook sizes | **7,648 bytes runtime; 8,485 bytes creation bytecode + 64 bytes constructor arguments = 8,549 bytes initcode** |
 | Token sizes | 1,360 bytes runtime; 1,468 bytes initcode |
 
 The mainnet run was:
@@ -33,7 +33,7 @@ The mainnet endpoint returned PoolManager runtime code (24,009 bytes) and IMD's 
 - 1,000 actual-fill fuzz cases per local ordering; 256 per fork ordering. Tiny fees, zero-unit budgets, one-unit budgets, rounding, and the named error for unrepresentable specified amounts.
 - Static pool fee and zero LP override; no specified-side delta; exact permission/address agreement and initialization authentication; wrong pool, repeated initialization, unauthorized callbacks, unrequested unlock callbacks, and nested-unlock rejection.
 - Full, partial, dust, empty, out-of-liquidity, and already-beyond-bound batches. Unspent input remains as claims. Dust/zero fills do not start the cooldown; meaningful fills do, including exact 3,600-second eligibility.
-- Previous-block closing reference, within-block freeze, age 50 versus 51, stale execution using current price, and sweeps that cannot refresh old observations.
+- Previous-block closing reference, within-block freeze, age 50 versus 51, stale execution using the first-touch snapshot with half budget, and sweeps that cannot refresh old observations. Atomic pump/batch/dump, repeated zero-fill batches, stale dust-fill retries, and next-block recovery are covered in both currency orderings.
 - Anyone-callable sweep, repeated empty sweep, batch output to the dead address, no in-callback transfers/buybacks, and no batch hook fee.
 - Fresh one-sided launch liquidity with **zero IMD and zero ETH** in a real local PoolManager before an exact-output buy. The paired input fee is still collected before router settlement.
 - Empty-chain construction with no external code, failure before initialization, invalid constructor inputs, wrong permission address, and extreme opening sqrt prices.
@@ -48,6 +48,14 @@ The stateful test ran **256 sequences × 64 calls = 16,384 calls, zero reverts**
 3. Actual collected token fees equal pending burn claims plus cumulative sweeps.
 4. The dead address receives exactly cumulative sweeps plus batch output.
 5. Token balances across participants, PoolManager, and the dead address sum to the unchanged supply.
+
+## Stale-reference revision
+
+Finding `4e8a3d228b7768dd024905b5ade47b22350ae64c2ece7b653c9baba1f993a10c` reproduced before editing the hook. The new `test_StaleReferenceRejectsAtomicSandwich` and `test_StaleZeroFillsCannotRatchetPriceWithinBlock` both failed in both currency orderings on the accepted implementation. With SWARMLER as currency0, the sandwich spent **66.607594936708860769 IMD** from the hook and increased the attacker's 600 IMD to **607.232415234335703449 IMD**. Five zero-fill batches moved sqrt price to `91756545168859501751278964702`, past the first block limit `81524501944022545457710779451`.
+
+The sole runtime change removes `anchor = current` from the stale branch. `_touch()` already sampled the current price before any swap in the block; that snapshot now remains the anchor even when its source observation is stale. The half budget, 50-block age boundary, fee accounting, permissions, and cooldown remain unchanged. After repair, the sandwich spends **zero** hook funds and leaves the attacker with **576.938907647395303724 IMD**. Repeated zero fills stop at the first limit. A third regression covers a sweep as first touch, dust partial fills with no cooldown, repeated retries, claim conservation, and recovery with the normal budget after the next block's snapshot. All three tests are inherited by both mainnet fork suites.
+
+Advisory `699795dfd1fec95d04311cafd695f62ed98e64e72a1ccc21d528830516032666` correctly observes that a 1.03 sqrt-price factor permits a 1.0609 spot-price factor. That is the documented M1 interpretation, so no runtime change was made for it. The existing partial-batch test now independently checks the squared price ratio in both currency orderings, within integer rounding. Reviewer verdicts and reproduction details are in `.imd-responses.json`.
 
 ## Focused security review
 
