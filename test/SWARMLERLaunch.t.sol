@@ -8,6 +8,7 @@ import {
     IPoolManager,
     PoolManager,
     PoolKey,
+    Currency,
     IHooks,
     SwapParams,
     ModifyLiquidityParams,
@@ -16,6 +17,8 @@ import {
 } from "./support/HookFixture.sol";
 import {PoolRouter} from "./support/PoolRouter.sol";
 import {MockIMD} from "./support/MockIMD.sol";
+import {CustomRevert} from "../vendor/v4-core/src/libraries/CustomRevert.sol";
+import {Hooks} from "../vendor/v4-core/src/libraries/Hooks.sol";
 
 /// @notice Empty-chain deployment and a launch pool seeded with SWARMLER only.
 contract SWARMLERLaunchTest is HookFixture {
@@ -72,6 +75,52 @@ contract SWARMLERLaunchTest is HookFixture {
         new SWARMLERHook(manager, address(0));
         vm.expectRevert(SWARMLERHook.InvalidConfiguration.selector);
         new SWARMLERHook(manager, IMD);
+    }
+
+    function test_InvalidOpeningPriceRollsBackHookInitialization() public {
+        token = _deployToken(true);
+        hook = _deployHook(manager, address(token));
+        key = hook.poolKey();
+        uint160[3] memory invalidPrices = [uint160(0), TickMath.MIN_SQRT_PRICE - 1, TickMath.MAX_SQRT_PRICE];
+        for (uint256 i; i < invalidPrices.length; ++i) {
+            vm.expectRevert(abi.encodeWithSelector(TickMath.InvalidSqrtPrice.selector, invalidPrices[i]));
+            manager.initialize(key, invalidPrices[i]);
+            assertFalse(hook.initialized(), "rejected initialization poisoned the launch");
+            assertEq(hook.referencePrice(), 0);
+            assertEq(hook.referenceBlock(), 0);
+            assertEq(hook.lastTouchedBlock(), 0);
+            assertEq(hook.lastPriceBlock(), 0);
+        }
+        manager.initialize(key, Q96);
+        assertTrue(hook.initialized());
+        assertEq(hook.referencePrice(), Q96);
+    }
+
+    function test_OtherPoolTermsCannotBindTheHookBeforeLaunch() public {
+        token = _deployToken(true);
+        hook = _deployHook(manager, address(token));
+        key = hook.poolKey();
+        for (uint256 field; field < 3; ++field) {
+            PoolKey memory wrong = hook.poolKey();
+            if (field == 0) wrong.fee = 0x800000; // v4 dynamic-fee flag
+            if (field == 1) wrong.tickSpacing = 1;
+            if (field == 2) wrong.currency0 = Currency.wrap(address(0));
+            vm.expectRevert(
+                abi.encodeWithSelector(
+                    CustomRevert.WrappedError.selector,
+                    address(hook),
+                    IHooks.beforeInitialize.selector,
+                    abi.encodeWithSelector(SWARMLERHook.InvalidPool.selector),
+                    abi.encodeWithSelector(Hooks.HookCallFailed.selector)
+                )
+            );
+            manager.initialize(wrong, Q96);
+            assertFalse(hook.initialized());
+        }
+        // Failed attempts cannot prevent the legitimate factory from opening this pool.
+        vm.prank(makeAddr("launch factory caller"));
+        manager.initialize(key, Q96);
+        assertTrue(hook.initialized());
     }
 
     function test_ExtremeOpeningPricesAreAcceptedAndBatchLimitsClamp() public {

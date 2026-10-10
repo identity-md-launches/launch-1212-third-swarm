@@ -20,8 +20,9 @@ import {
     Vm
 } from "./support/HookFixture.sol";
 import {IUnlockCallback} from "../vendor/v4-core/src/interfaces/callback/IUnlockCallback.sol";
+import {HookFailureChecks} from "./support/HookFailureChecks.sol";
 
-contract SWARMLERHookTest is HookFixture, IUnlockCallback {
+contract SWARMLERHookTest is HookFailureChecks, IUnlockCallback {
     function setUp() public virtual {
         _setUp(true, false);
     }
@@ -65,6 +66,11 @@ contract SWARMLERHookTest is HookFixture, IUnlockCallback {
         int24 distance = int24(uint24(ticks) + 1);
         uint160 limit = TickMath.getSqrtPriceAtTick(zeroForOne ? -distance : distance);
         _checkFee(buy, exactInput, amount, limit);
+    }
+
+    /// forge-config: default.fuzz.runs = 1000
+    function testFuzz_UnfilledRequestCannotIncreaseFee(bool buy, bool exactInput, uint256 extra) public virtual {
+        _unfilledRequestCannotIncreaseFee(buy, exactInput, extra);
     }
 
     function test_FeesAreRoundedDownForTinySwaps() public {
@@ -421,5 +427,10 @@ contract SWARMLERHookToken1Test is SWARMLERHookTest {
     /// forge-config: default.fuzz.runs = 1000
     function testFuzz_ActualFillFees(bool buy, bool exactInput, uint96 amountSeed, uint8 ticks) public override {
         super.testFuzz_ActualFillFees(buy, exactInput, amountSeed, ticks);
+    }
+
+    /// forge-config: default.fuzz.runs = 1000
+    function testFuzz_UnfilledRequestCannotIncreaseFee(bool buy, bool exactInput, uint256 extra) public override {
+        super.testFuzz_UnfilledRequestCannotIncreaseFee(buy, exactInput, extra);
     }
 }
