@@ -202,6 +202,72 @@ contract SWARMLERHookTest is HookFailureChecks, IUnlockCallback {
         _assertBatchLog(fees / 8, _limit(closingPrice), true);
     }
 
+    /// forge-config: default.fuzz.runs = 1000
+    function testFuzz_FirstTouchFreezesBatchBound(uint16 ageSeed, uint96 amountSeed, bool buy, bool sweepFirst)
+        public
+        virtual
+    {
+        _pairFees();
+        uint160 closingPrice = _price();
+        uint256 closingBlock = vm.getBlockNumber();
+        uint256 age = bound(ageSeed, 50, 1000);
+        vm.roll(closingBlock + age);
+        if (sweepFirst) hook.sweep();
+        // Both favorable and adverse price movements must leave the first-touch
+        // reference alone, including the exact 50/51-block staleness boundary.
+        _swap(buy, true, bound(amountSeed, 1e18, 1e23), 0);
+        assertEq(hook.referencePrice(), closingPrice);
+        assertEq(hook.referenceBlock(), closingBlock);
+        _batchRespectsFrozenReference(closingPrice, age > 50);
+        assertEq(hook.referencePrice(), closingPrice);
+        assertEq(hook.referenceBlock(), closingBlock);
+        _assertSettled();
+    }
+
+    function _batchRespectsFrozenReference(uint160 closingPrice, bool stale) internal {
+        uint256 pendingBefore = hook.pending();
+        uint256 burnBefore = hook.pendingBurn();
+        uint256 budget = pendingBefore / (stale ? 8 : 4);
+        uint160 limit = _limit(closingPrice);
+        uint160 beforePrice = _price();
+        vm.recordLogs();
+        (uint256 spent, uint256 burned) = hook.executeBatch();
+        _assertBatchLog(budget, limit, stale);
+        assertLe(spent, budget);
+        assertEq(hook.pending(), pendingBefore - spent);
+        assertEq(hook.pendingBurn(), burnBefore, "batch charged its own hook fee");
+        assertEq(token.balanceOf(DEAD), burned, "buyback output was not burned");
+        if (hook.tokenIsCurrency0() ? beforePrice >= limit : beforePrice <= limit) {
+            assertEq(spent, 0);
+            assertEq(burned, 0);
+            assertEq(_price(), beforePrice);
+        } else {
+            if (hook.tokenIsCurrency0()) {
+                assertGe(_price(), beforePrice);
+                assertLe(_price(), limit);
+            } else {
+                assertLe(_price(), beforePrice);
+                assertGe(_price(), limit);
+            }
+            if (spent < budget) assertEq(_price(), limit);
+        }
+        if (spent != 0 && spent * 100 >= budget) {
+            assertEq(hook.lastBatch(), vm.getBlockTimestamp());
+            vm.expectRevert(SWARMLERHook.CooldownActive.selector);
+            hook.executeBatch();
+        } else {
+            assertEq(hook.lastBatch(), 0);
+            // A dust or zero fill must remain callable without ratcheting the
+            // limit, even though the previous batch may have moved the price.
+            vm.recordLogs();
+            (uint256 retrySpent, uint256 retryBurned) = hook.executeBatch();
+            _assertBatchLog((pendingBefore - spent) / (stale ? 8 : 4), limit, stale);
+            assertEq(retrySpent, 0);
+            assertEq(retryBurned, 0);
+            assertEq(hook.lastBatch(), 0);
+        }
+    }
+
     function test_StaleReferenceRejectsAtomicSandwich() public {
         _liquidity(-LIQUIDITY);
         router.liquidity(key, ModifyLiquidityParams(-887220, 887220, 1e21, bytes32(0)), FUNDING, FUNDING);
@@ -565,5 +631,13 @@ contract SWARMLERHookToken1Test is SWARMLERHookTest {
     /// forge-config: default.fuzz.runs = 1000
     function testFuzz_UnfilledRequestCannotIncreaseFee(bool buy, bool exactInput, uint256 extra) public override {
         super.testFuzz_UnfilledRequestCannotIncreaseFee(buy, exactInput, extra);
+    }
+
+    /// forge-config: default.fuzz.runs = 1000
+    function testFuzz_FirstTouchFreezesBatchBound(uint16 ageSeed, uint96 amountSeed, bool buy, bool sweepFirst)
+        public
+        override
+    {
+        super.testFuzz_FirstTouchFreezesBatchBound(ageSeed, amountSeed, buy, sweepFirst);
     }
 }

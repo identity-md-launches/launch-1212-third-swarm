@@ -33,6 +33,19 @@ reference history, stale budgets, and cooldown eligibility. A separate custom
 ERC-20 handler checks balances and allowances after random approvals, transfers,
 delegated transfers, self-transfers, revocations, and rejected calls.
 
+The stale-reference regression checks now fuzz first touches by a swap or sweep,
+then favorable/adverse same-block price moves, across the 50/51-block boundary.
+Both address orderings run 1000 cases. The hook invariants also verify the emitted
+300 bps limit against independently recorded reference history by cross
+multiplication, actual pool-price movement, partial-fill termination, skipped
+batches, and the single batch swap's pool and sender. They reject a same-block
+price ratchet even if fee claims and the batch budget still balance correctly.
+
+As a negative control, an isolated scratch copy restored the previously fixed
+`anchor = current` stale-price fallback. With seed `0x737761726d6c6572`, the new
+fuzz property and strengthened invariants failed in both token orderings. This
+was a deliberate regression experiment, not a defect in the current source.
+
 `SWARMLERFork.t.sol` inherits the integration and failure checks for Ethereum's
 deployed PoolManager and IMD. To run it against a pinned, post-deployment block:
 
@@ -41,7 +54,11 @@ forge test --fork-url "$MAINNET_RPC_URL" --fork-block-number "$MAINNET_FORK_BLOC
   --match-path test/SWARMLERFork.t.sol
 ```
 
-Fork suites explicitly skip without an active fork. No mainnet run was available
-in this task: no RPC was configured, and three public RPC endpoints returned HTTP
-403. Offline results therefore establish local PoolManager integration, not the
-current deployed IMD contract's behavior. No implementation defect was reproduced.
+Fork suites explicitly skip without an active fork. In this revision, all 88 fork
+tests passed against Ethereum PoolManager and IMD at block **26158741**, hash
+`0x6d497061de2131a55affe21622852880fe9f42763f2c83bc77f64c06538df8ec`, using
+`https://ethereum-rpc.publicnode.com`. This supersedes the previous round's
+unavailable fork run. Fork fuzz properties ran 256 cases each; the local versions
+run 1000 cases each. The fork fixture funds the test trader with `deal` and deploys
+a new SWARMLER pool; it uses the real paired token and PoolManager code and storage.
+No defect in the current implementation was reproduced.

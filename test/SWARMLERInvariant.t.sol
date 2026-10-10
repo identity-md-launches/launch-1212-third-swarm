@@ -8,6 +8,7 @@ import {
     IPoolManager,
     IERC20Minimal,
     PoolKey,
+    PoolId,
     SwapParams,
     ModifyLiquidityParams,
     BalanceDelta,
@@ -134,12 +135,13 @@ contract SwarmHandler is Test {
         bool stale = vm.getBlockNumber() - expectedReferenceBlock > 50;
         uint256 budget = beforePending / 4;
         if (stale) budget /= 2;
+        (uint160 beforePrice,,,) = manager.getSlot0(key.toId());
         vm.recordLogs();
         (uint256 spent, uint256 burned) = hook.executeBatch();
         assertLe(spent, budget, "batch exceeded its fresh/stale budget");
         assertEq(hook.pending(), beforePending - spent);
         assertEq(hook.pendingBurn(), beforeBurn, "batch paid a hook fee");
-        _checkBatchLogs(vm.getRecordedLogs(), budget, spent, burned, stale);
+        _checkBatchLogs(vm.getRecordedLogs(), budget, spent, burned, stale, beforePrice);
         if (spent != 0 && spent * 100 >= budget) expectedLastBatch = vm.getBlockTimestamp();
         pairedSpent += spent;
         bought += burned;
@@ -174,21 +176,40 @@ contract SwarmHandler is Test {
         }
     }
 
-    function _checkBatchLogs(Vm.Log[] memory logs, uint256 budget, uint256 spent, uint256 burned, bool stale) private {
+    function _checkBatchLogs(
+        Vm.Log[] memory logs,
+        uint256 budget,
+        uint256 spent,
+        uint256 burned,
+        bool stale,
+        uint160 beforePrice
+    ) private {
         bool sawBatch;
         bool sawSwap;
+        uint160 limit;
         for (uint256 i; i < logs.length; ++i) {
             if (logs[i].emitter == address(hook)) {
                 assertEq(logs[i].topics[0], BATCH_EVENT, "batch emitted a hook fee");
-                (uint256 loggedBudget, uint256 loggedSpent, uint256 loggedBurned,, bool loggedStale) =
-                    abi.decode(logs[i].data, (uint256, uint256, uint256, uint160, bool));
+                assertFalse(sawBatch, "batch emitted twice");
+                (
+                    uint256 loggedBudget,
+                    uint256 loggedSpent,
+                    uint256 loggedBurned,
+                    uint160 loggedLimit,
+                    bool loggedStale
+                ) = abi.decode(logs[i].data, (uint256, uint256, uint256, uint160, bool));
                 assertEq(loggedBudget, budget);
                 assertEq(loggedSpent, spent);
                 assertEq(loggedBurned, burned);
                 assertEq(loggedStale, stale);
+                limit = loggedLimit;
+                _checkReferenceLimit(limit);
                 sawBatch = true;
             }
             if (logs[i].emitter == address(manager) && logs[i].topics[0] == SWAP_EVENT) {
+                assertFalse(sawSwap, "batch performed more than one swap");
+                assertEq(logs[i].topics[1], PoolId.unwrap(key.toId()), "batch used a different pool");
+                assertEq(address(uint160(uint256(logs[i].topics[2]))), address(hook), "wrong batch sender");
                 (int128 d0, int128 d1,,,, uint24 fee) =
                     abi.decode(logs[i].data, (int128, int128, uint160, uint128, int24, uint24));
                 assertEq(uint256(-int256(hook.tokenIsCurrency0() ? d1 : d0)), spent);
@@ -199,7 +220,39 @@ contract SwarmHandler is Test {
             }
         }
         assertTrue(sawBatch);
-        if (!sawSwap) assertEq(spent + burned, 0);
+        (uint160 afterPrice,,,) = manager.getSlot0(key.toId());
+        bool crossed = hook.tokenIsCurrency0() ? beforePrice >= limit : beforePrice <= limit;
+        assertEq(sawSwap, budget != 0 && !crossed, "batch must swap unless empty or already past its bound");
+        if (!sawSwap) {
+            assertEq(spent + burned, 0);
+            assertEq(afterPrice, beforePrice, "skipped batch moved the pool price");
+        } else {
+            if (hook.tokenIsCurrency0()) {
+                assertGe(afterPrice, beforePrice, "batch swapped in the sell direction");
+                assertLe(afterPrice, limit, "batch crossed its frozen reference bound");
+            } else {
+                assertLe(afterPrice, beforePrice, "batch swapped in the sell direction");
+                assertGe(afterPrice, limit, "batch crossed its frozen reference bound");
+            }
+            if (spent < budget) assertEq(afterPrice, limit, "partial fill stopped before its only price limit");
+        }
+    }
+
+    function _checkReferenceLimit(uint160 limit) private view {
+        assertGt(limit, TickMath.MIN_SQRT_PRICE);
+        assertLt(limit, TickMath.MAX_SQRT_PRICE);
+        // Verify the 300 bps boundary by cross multiplication, including the
+        // correct rounding direction. Use the handler's first-touch history,
+        // never the hook's getter or the live (possibly manipulated) spot price.
+        if (hook.tokenIsCurrency0()) {
+            uint256 cap = uint256(expectedReferencePrice) * 10300;
+            assertLe(uint256(limit) * 10000, cap, "buyback limit exceeded reference plus 3%");
+            if (limit != TickMath.MAX_SQRT_PRICE - 1) assertGt((uint256(limit) + 1) * 10000, cap);
+        } else {
+            uint256 cap = uint256(expectedReferencePrice) * 10000;
+            assertGe(uint256(limit) * 10300, cap, "reciprocal buyback limit exceeded reference plus 3%");
+            if (limit != TickMath.MIN_SQRT_PRICE + 1) assertLt((uint256(limit) - 1) * 10300, cap);
+        }
     }
 
     function _abs(int128 amount) private pure returns (uint256) {
