@@ -1,0 +1,21 @@
+{
+  "kind": "univ4_hook",
+  "token": {
+    "contract": "SWARMLER",
+    "name": "Third Swarm",
+    "symbol": "SWARMLER",
+    "decimals": 18
+  },
+  "hook": {
+    "contract": "SWARMLERHook",
+    "constructorArgs": ["$poolManager", "$token"],
+    "permissions": ["beforeInitialize", "beforeSwap", "afterSwap", "afterSwapReturnDelta"]
+  },
+  "pool": {
+    "pairedCurrency": "0xd34a99bc0f67ae1bbd63c660e6d0b0dd03e263b7",
+    "fee": 12500,
+    "tickSpacing": 60,
+    "initialPrice": "79228162514264337593543950336"
+  },
+  "notes": "Direct immutable CREATE2 deployment; mine the hook address so its low 14 bits equal 0x20c4. Constructor arguments resolve to Ethereum mainnet PoolManager 0x000000000004444c5dc75cB358380D2e3dE08A90 and the freshly deployed SWARMLER token. Static 1.25% LP fee plus 1% of the actual unspecified-currency BalanceDelta, rounded down, collected as ERC-6909 claims. Anyone may sweep token claims to 0x000000000000000000000000000000000000dEaD or execute IMD-funded batch buybacks in a separate unlock. Batches spend up to 25%, use a 300 bps directional sqrt-price bound, halve the budget after more than 50 blocks without a fresh reference, and start the 3600 second cooldown only upon spending at least 1% of the budget. Buybacks pay no hook fee. The factory receives the full 1e27 supply and handles all distribution and opening-price economics; initialPrice is provenance only."
+}

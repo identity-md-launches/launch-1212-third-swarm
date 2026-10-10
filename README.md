@@ -1,3 +1,7 @@
+# Third Swarm token and hook ($SWARMLER)
+
+The launch contracts are now implemented in `src/SWARMLER.sol` and `src/SWARMLERHook.sol`, with the requested root `launch.json`. See [deployment, mechanics, and operations](docs/SWARMLER-launch.md), [validation and security review](docs/SWARMLER-validation.md), and [pinned offline dependencies](vendor/README.md). Build and test with `forge build`, `forge test`, and `forge fmt --check` at the repository root. The existing compiler configuration and the accepted website/logo work below are preserved.
+
 # Third Swarm website ($SWARMLER)
 
 The website is implemented in `site/` as static HTML, CSS, SVG and JavaScript. The finished production export is in `dist/`, including `index.html`, `404.html`, local fonts, the supplied logo, and a derived favicon. There is no application build step or runtime package dependency.
